@@ -34,15 +34,15 @@ The ARP file is broken down into several sections:
 - This section is divided up into a number of other subsections:
 
 - **aggregation**
--- Specify what aggregate functions, such as SUM, MAX, etc, are supported and what signatures they have. You can also specify a rewrite to alter the SQL for how this is issued.
--**except/project/join/sort/union/union_all/values**
--- These sections indicate if the specific operation is supported or not.
--**expressions**
--- This section outlines general operations that are supported. The main sections are:
--**operators**
--- Outlines which scalar functions, such as SIN, SUBSTR, LOWER, etc, are supported, along with the signatures of these functions which are supported. Finally, you can also specify a rewrite to alter the SQL for how this is issued.
--**variable_length_operators**
--- The same as operators, but allows specification of functions which may have a variable number of arguments, such as AND and OR.
+  - Specify what aggregate functions, such as SUM, MAX, etc, are supported and what signatures they have. You can also specify a rewrite to alter the SQL for how this is issued.
+- **except/project/join/sort/union/union_all/values**
+  - These sections indicate if the specific operation is supported or not.
+- **expressions**
+  - This section outlines general operations that are supported. The main sections are:
+- **operators**
+  - Outlines which scalar functions, such as SIN, SUBSTR, LOWER, etc, are supported, along with the signatures of these functions which are supported. Finally, you can also specify a rewrite to alter the SQL for how this is issued.
+- **variable_length_operators**
+  - The same as operators, but allows specification of functions which may have a variable number of arguments, such as AND and OR.
 
 If an operation or function is not specified in the ARP file, then Dremio will handle the operation itself. Any operations which are indicated as supported but need to be stacked on operations which are not will not be pushed down to the SQL query.
 
