@@ -54,7 +54,7 @@ If an operation or function is not specified in the ARP file, then Dremio will h
 The SQLite example provided here shows and example ARP YAML file for SQLite and the associated files require to build a connector
 from the template. 
 
-## Building
+## Building and Installation
 
 1. In root directory with the pom.xml file run `mvn clean install`
 2. Take the resulting .jar file in the target folder and put it in the \dremio\jars folder in Dremio
