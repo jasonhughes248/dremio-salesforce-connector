@@ -30,8 +30,7 @@ The ARP file is broken down into several sections:
 **data_types**
 - This section outlines which data types are supported by the plugin, their names as they appear in the JDBC driver, and how they map to Dremio types.
 
-**relational_algebra**
-- This section is divided up into a number of other subsections:
+**relational_algebra** - This section is divided up into a number of other subsections:
 
 - **aggregation**
   - Specify what aggregate functions, such as SUM, MAX, etc, are supported and what signatures they have. You can also specify a rewrite to alter the SQL for how this is issued.
