@@ -21,6 +21,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.dremio.exec.catalog.conf.DisplayMetadata;
 import com.dremio.exec.catalog.conf.NotMetadataImpacting;
+import com.dremio.exec.catalog.conf.Secret;
 import com.dremio.exec.catalog.conf.SourceType;
 import com.dremio.exec.server.SabotContext;
 import com.dremio.exec.store.jdbc.CloseableDataSource;
@@ -33,30 +34,51 @@ import com.google.common.annotations.VisibleForTesting;
 import io.protostuff.Tag;
 
 /**
- * Configuration for SQLite sources.
+ * Configuration for Salesforce sources.
  */
-@SourceType(value = "SQLITE", label = "SQLite")
-public class SqliteConf extends AbstractArpConf<SqliteConf> {
-  private static final String ARP_FILENAME = "arp/implementation/sqlite-arp.yaml";
+@SourceType(value = "SALESFORCEARP", label = "Salesforce")
+public class SalesforceConf extends AbstractArpConf<SalesforceConf> {
+  private static final String ARP_FILENAME = "arp/implementation/salesforce-arp.yaml";
   private static final ArpDialect ARP_DIALECT =
       AbstractArpConf.loadArpFile(ARP_FILENAME, (ArpDialect::new));
-  private static final String DRIVER = "org.sqlite.JDBC";
+  private static final String DRIVER = "cdata.jdbc.salesforce.SalesforceDriver";
 
   @NotBlank
   @Tag(1)
-  @DisplayMetadata(label = "Database")
-  public String database;
+  @DisplayMetadata(label = "Username")
+  public String username;
 
+
+  @NotBlank
   @Tag(2)
+  @Secret
+  @DisplayMetadata(label = "Password")
+  public String password;
+
+
+
+  @NotBlank
+  @Tag(3)
+  @Secret
+  @DisplayMetadata(label = "Security Token")
+  public String securityToken;
+
+
+
+  @Tag(4)
   @DisplayMetadata(label = "Record fetch size")
   @NotMetadataImpacting
   public int fetchSize = 200;
 
+
+
   @VisibleForTesting
   public String toJdbcConnectionString() {
-    final String database = checkNotNull(this.database, "Missing database.");
+    final String username = checkNotNull(this.username, "Missing username.");
+    final String password = checkNotNull(this.password, "Missing password.");
+    final String securityToken = checkNotNull(this.securityToken, "Missing security token.");
 
-    return String.format("jdbc:sqlite:%s", database);
+    return String.format("jdbc:salesforce:User=%s;Password=%s;Security Token=%s", username, password, securityToken);
   }
 
   @Override
@@ -67,13 +89,13 @@ public class SqliteConf extends AbstractArpConf<SqliteConf> {
         .withFetchSize(fetchSize)
         .withDatasourceFactory(this::newDataSource)
         .clearHiddenSchemas()
-        .addHiddenSchema("SYSTEM")
+        //.addHiddenSchema("SYSTEM")
         .build();
   }
 
   private CloseableDataSource newDataSource() {
     return DataSources.newGenericConnectionPoolDataSource(DRIVER,
-      toJdbcConnectionString(), null, null, null, DataSources.CommitMode.DRIVER_SPECIFIED_COMMIT_MODE);
+      toJdbcConnectionString(), username, password, null, DataSources.CommitMode.DRIVER_SPECIFIED_COMMIT_MODE);
   }
 
   @Override

@@ -16,15 +16,15 @@
 
 metadata:
   # Manually Configured Metadata Section.
-  name: SQLITE
-  apiname: sqlite
+  name: SALESFORCEARP
+  apiname: salesforce
   spec_version: '1'
 
 syntax:
   # Manually Configured Syntax Section.
   identifier_quote: '"'
   identifier_length_limit: 128
-  allows_boolean_literal: false
+  allows_boolean_literal: true
   map_boolean_literal_to_bit: false
   supports_catalogs: false
   supports_schemas: false
@@ -33,14 +33,30 @@ data_types:
   mappings:
   # Manually Configured Data Types Mappings Section.
   - source:
-      name: "INTEGER"
+      name: "bit"
+    dremio:
+      name: "boolean"
+    required_cast_arguments: "none"
+  - source:
+      name: "INT"
     dremio:
       name: "integer"
     required_cast_arguments: "none"
   - source:
-      name: "REAL"
+      name: "FLOAT"
     dremio:
       name: "double"
+    required_cast_arguments: "none"
+  - source:
+      name: "TIMESTAMP"
+      max_scale: 6
+    dremio:
+      name: "timestamp"
+    required_cast_arguments: "none"
+  - source:
+      name: "DATE"
+    dremio:
+      name: "date"
     required_cast_arguments: "none"
   - source:
       name: "VARCHAR"
@@ -187,18 +203,7 @@ expressions:
       - args:
         - "boolean"
         return: "boolean"
-    # Example scalar function
-    - names:
-      - "sign"
-      signatures:
-      - args:
-        - "double"
-        return: "double"
-      - args:
-        - "integer"
-        return: "integer"
-        # Example rewrite (although this is not necessary here as the default is the same)
-        rewrite: "SIGN({0})"
+
 
   variable_length_operators:
     - names:

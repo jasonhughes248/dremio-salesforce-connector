@@ -1,6 +1,16 @@
-# Dremio ARP Example Connector
+# Dremio Salesforce ARP Connector
 
-## Overview
+The Salesforce connector allows Dremio to connect to and query data in Salesforce.com. Note that it does require a third-party JDBC driver that is not free, but does allow a free trial.
+
+## Building and Installation
+
+1. In root directory with the pom.xml file run `mvn clean install`
+2. Take the resulting .jar file in the target folder and put it in the $DREMIO_HOME/jars folder in Dremio
+3. Download the Salesforce JDBC driver from CData (https://www.cdata.com/drivers/salesforce/jdbc/) and put in in the $DREMIO_HOME/jars/3rdparty folder. Note you will need to sign up for a trial usage of the driver or pay for it if needing to use long term.
+4. Restart Dremio
+
+
+# ARP Overview
 
 The Advanced Relational Pushdown (ARP) Framework allows for the creation of Dremio plugins for any data source which has a JDBC driver and accepts SQL 
 as a query language. It allows for a mostly code-free creation of a plugin, allowing for modification of queries issued 
@@ -45,13 +55,4 @@ The ARP file is broken down into several sections:
 
 If an operation or function is not specified in the ARP file, then Dremio will handle the operation itself. Any operations which are indicated as supported but need to be stacked on operations which are not will not be pushed down to the SQL query.
 
-## SQLite example
-The SQLite example provided here shows and example ARP YAML file for SQLite and the associated files require to build a connector
-from the template. 
 
-## Building and Installation
-
-1. In root directory with the pom.xml file run `mvn clean install`
-2. Take the resulting .jar file in the target folder and put it in the \dremio\jars folder in Dremio
-3. Take the SQLite JDBC driver from (https://bitbucket.org/xerial/sqlite-jdbc/downloads/) and put in in the \dremio\jars\3rdparty folder
-4. Restart Dremio
