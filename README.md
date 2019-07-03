@@ -1,13 +1,6 @@
 # Dremio Salesforce ARP Connector
 
-The Salesforce connector allows Dremio to connect to and query data in Salesforce.com. Note that it does require a third-party JDBC driver that is not free, but does allow a free trial.
-
-## Building and Installation
-
-1. In root directory with the pom.xml file run `mvn clean install`
-2. Take the resulting .jar file in the target folder and put it in the $DREMIO_HOME/jars folder in Dremio
-3. Download the Salesforce JDBC driver from CData (https://www.cdata.com/drivers/salesforce/jdbc/) and put in in the $DREMIO_HOME/jars/3rdparty folder. Note you will need to sign up for a trial usage of the driver or pay for it if needing to use long term.
-4. Restart Dremio
+The Salesforce connector allows Dremio to connect to and query data in Salesforce.com. This can then allow you to build custom reports, dashboards, or even just ad-hoc SQL via your client tool of choice. Note that it does require a third-party JDBC driver that is not free, but does allow a free trial.
 
 
 # ARP Overview
@@ -56,3 +49,28 @@ The ARP file is broken down into several sections:
 If an operation or function is not specified in the ARP file, then Dremio will handle the operation itself. Any operations which are indicated as supported but need to be stacked on operations which are not will not be pushed down to the SQL query.
 
 
+## Building and Installation
+
+1. In root directory with the pom.xml file run `mvn clean install`
+2. Take the resulting .jar file in the target folder and put it in the $DREMIO_HOME/jars folder in Dremio
+3. Download the [Salesforce JDBC driver from CData](https://www.cdata.com/drivers/salesforce/jdbc/) and put in in the $DREMIO_HOME/jars/3rdparty folder. Note you will need to sign up for a trial usage of the driver or pay for it if needing to use long term.
+4. Restart Dremio
+
+
+## Steps to create your own custom ARP connector
+
+Follow the below steps to modify this Salesforce connector to create your own custom ARP connector.
+
+Note that the ARP framework requires a JDBC Driver for the source to allow Dremio to connect to it.
+
+1. Refactor SalesforceConf.java to be {CustomSource}Conf.java, modifying all the instances of "salesforce" to your source name (including the driver class name)
+2. View documentation of the JDBC driver for how to construct the JDBC connection string. use this string construction in toJdbcConnectionString(). use the variables needed to add metadata labels and properties to the class
+3. Refactor salesforce-arp.yaml to be {customsource}-arp.yaml, modifying all instances of "salesforce" to your source name
+4. Download the JDBC driver for the source
+5. Use the JDBC driver to connect to a sample source via sql client (e.g. dbeaver, dbvizualizer)
+6. View the source documentation or view the data types used in the tables and views used to get a list of the data types you need to map to dremio data types
+7. Update the rest of the file to add/modify any functions, operator behavior, etc. specific to the source. You can use official Dremio connectors built on ARP, such as [Postgres](https://github.com/dremio/dremio/blob/master/community/plugins/jdbc/src/main/resources/arp/implementation/postgresql-arp.yaml) and [Oracle](https://github.com/dremio/dremio/blob/master/community/plugins/jdbc/src/main/resources/arp/implementation/oracle-arp.yaml) to view additional options available. 
+8. Update README.md
+9. To build, run `mvn clean install`. get the jar in the target dir, and copy that to $DREMIO_HOME/jars (on all nodes if running in cluster mode)
+10. Copy the JDBC driver to $DREMIO_HOME/jars/3rdparty (on all nodes if running in cluster mode)
+11. Restart dremio 
