@@ -23,7 +23,8 @@ import com.dremio.exec.catalog.conf.DisplayMetadata;
 import com.dremio.exec.catalog.conf.NotMetadataImpacting;
 import com.dremio.exec.catalog.conf.Secret;
 import com.dremio.exec.catalog.conf.SourceType;
-import com.dremio.exec.server.SabotContext;
+import com.dremio.options.OptionManager;
+import com.dremio.security.CredentialsService;
 import com.dremio.exec.store.jdbc.CloseableDataSource;
 import com.dremio.exec.store.jdbc.DataSources;
 import com.dremio.exec.store.jdbc.JdbcStoragePlugin;
@@ -83,7 +84,7 @@ public class SalesforceConf extends AbstractArpConf<SalesforceConf> {
 
   @Override
   @VisibleForTesting
-  public Config toPluginConfig(SabotContext context) {
+  public Config toPluginConfig(CredentialsService credentialsService, OptionManager optionManager) {
     return JdbcStoragePlugin.Config.newBuilder()
         .withDialect(getDialect())
         .withFetchSize(fetchSize)
