@@ -27,8 +27,7 @@ import com.dremio.options.OptionManager;
 import com.dremio.security.CredentialsService;
 import com.dremio.exec.store.jdbc.CloseableDataSource;
 import com.dremio.exec.store.jdbc.DataSources;
-import com.dremio.exec.store.jdbc.JdbcStoragePlugin;
-import com.dremio.exec.store.jdbc.JdbcStoragePlugin.Config;
+import com.dremio.exec.store.jdbc.JdbcPluginConfig;
 import com.dremio.exec.store.jdbc.dialect.arp.ArpDialect;
 import com.google.common.annotations.VisibleForTesting;
 
@@ -84,9 +83,8 @@ public class SalesforceConf extends AbstractArpConf<SalesforceConf> {
 
   @Override
   @VisibleForTesting
-  public Config toPluginConfig(CredentialsService credentialsService, OptionManager optionManager) {
-    return JdbcStoragePlugin.Config.newBuilder()
-        .withDialect(getDialect())
+  public JdbcPluginConfig buildPluginConfig(JdbcPluginConfig.Builder configBuilder, CredentialsService credentialsService, OptionManager optionManager) {
+         return configBuilder.withDialect(getDialect())
         .withFetchSize(fetchSize)
         .withDatasourceFactory(this::newDataSource)
         .clearHiddenSchemas()
