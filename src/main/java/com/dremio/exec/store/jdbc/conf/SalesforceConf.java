@@ -26,6 +26,7 @@ import com.dremio.exec.catalog.conf.SourceType;
 import com.dremio.options.OptionManager;
 import com.dremio.security.CredentialsService;
 import com.dremio.exec.store.jdbc.CloseableDataSource;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.dremio.exec.store.jdbc.DataSources;
 import com.dremio.exec.store.jdbc.JdbcPluginConfig;
 import com.dremio.exec.store.jdbc.dialect.arp.ArpDialect;
@@ -36,7 +37,7 @@ import io.protostuff.Tag;
 /**
  * Configuration for Salesforce sources.
  */
-@SourceType(value = "SALESFORCEARP", label = "Salesforce")
+@SourceType(value = "SALESFORCEARP", label = "Salesforce", uiConfig = "salesforce-layout.json", externalQuerySupported = true)
 public class SalesforceConf extends AbstractArpConf<SalesforceConf> {
   private static final String ARP_FILENAME = "arp/implementation/salesforce-arp.yaml";
   private static final ArpDialect ARP_DIALECT =
@@ -70,6 +71,22 @@ public class SalesforceConf extends AbstractArpConf<SalesforceConf> {
   @NotMetadataImpacting
   public int fetchSize = 200;
 
+  @Tag(5)
+  @NotMetadataImpacting
+  @JsonIgnore
+  @DisplayMetadata(label = "Grant External Query access (External Query allows creation of VDS from a Salesforce query. Learn more here: https://docs.dremio.com/data-sources/external-queries.html#enabling-external-queries)")
+  public boolean enableExternalQuery = false;
+
+  @Tag(6)
+  @DisplayMetadata(label = "Maximum idle connections")
+  @NotMetadataImpacting
+  public int maxIdleConns = 8;
+
+  @Tag(7)
+  @DisplayMetadata(label = "Connection idle time (s)")
+  @NotMetadataImpacting
+  public int idleTimeSec = 60;
+
 
 
   @VisibleForTesting
@@ -94,8 +111,10 @@ public class SalesforceConf extends AbstractArpConf<SalesforceConf> {
 
   private CloseableDataSource newDataSource() {
     return DataSources.newGenericConnectionPoolDataSource(DRIVER,
-      toJdbcConnectionString(), username, password, null, DataSources.CommitMode.DRIVER_SPECIFIED_COMMIT_MODE);
-  }
+      toJdbcConnectionString(), username, password, null, DataSources.CommitMode.DRIVER_SPECIFIED_COMMIT_MODE,
+      maxIdleConns,
+      idleTimeSec);
+    }
 
   @Override
   public ArpDialect getDialect() {
